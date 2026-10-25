@@ -12,6 +12,10 @@ Thread an interceptor through an offshore oil-field course: clear turrets and in
 ![Vite](https://img.shields.io/badge/Vite-6-646CFF?logo=vite&logoColor=white)
 ![Playwright](https://img.shields.io/badge/Tested_with-Playwright-2EAD33?logo=playwright&logoColor=white)
 
+<img width="2548" height="1260" alt="image" src="https://github.com/user-attachments/assets/6aa84659-cab9-4709-959b-353f3b7b1435" />
+<img width="2552" height="1252" alt="image" src="https://github.com/user-attachments/assets/bd55e028-7780-460d-b0b9-022eb306673b" />
+<img width="2555" height="1249" alt="image" src="https://github.com/user-attachments/assets/fb996022-c735-4ae9-bbed-9d2cb34149c7" />
+
 <!-- Add a screenshot or GIF here, e.g. docs/flight.png -->
 <!-- ![Vyxxen in flight](docs/flight.png) -->
 
