@@ -2,6 +2,9 @@
 
 A playable Three.js prototype based on [`design.md`](../design.md). Pilot a low-poly interceptor through an authored offshore course: clear threats, skim oil-platform pads for fuel, and make it to the final runway.
 
+<img width="2559" height="1267" alt="image" src="https://github.com/user-attachments/assets/210f66fa-e10b-4e74-9ba4-94923489c46d" />
+
+
 ## Run locally
 
 Requires **Node.js 20.19+ or 22.12+** and a desktop browser with WebGL 2 support.
