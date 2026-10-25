@@ -6,6 +6,11 @@
 
 Thread an interceptor through an offshore oil-field course: clear turrets and interceptors, skim green platforms for fuel, and make it home to the runway.
 
+<img width="2559" height="1267" alt="image" src="https://github.com/user-attachments/assets/210f66fa-e10b-4e74-9ba4-94923489c46d" />
+
+
+## Run locally
+
 ![Three.js](https://img.shields.io/badge/Three.js-r180-000000?logo=threedotjs&logoColor=white)
 ![JavaScript](https://img.shields.io/badge/JavaScript-ES_Modules-F7DF1E?logo=javascript&logoColor=black)
 ![WebGL 2](https://img.shields.io/badge/WebGL-2-990000?logo=webgl&logoColor=white)
