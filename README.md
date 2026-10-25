@@ -1,80 +1,147 @@
+<div align="center">
+
 # VYXXEN — Offshore Run
 
-A playable Three.js prototype based on [`design.md`](../design.md). Pilot a low-poly interceptor through an authored offshore course: clear threats, skim oil-platform pads for fuel, and make it to the final runway.
+**A low-poly isometric flight shooter for the browser, built in Three.js.**
 
-## Run locally
+Thread an interceptor through an offshore oil-field course: clear turrets and interceptors, skim green platforms for fuel, and make it home to the runway.
 
-Requires **Node.js 20.19+ or 22.12+** and a desktop browser with WebGL 2 support.
+![Three.js](https://img.shields.io/badge/Three.js-r180-000000?logo=threedotjs&logoColor=white)
+![JavaScript](https://img.shields.io/badge/JavaScript-ES_Modules-F7DF1E?logo=javascript&logoColor=black)
+![WebGL 2](https://img.shields.io/badge/WebGL-2-990000?logo=webgl&logoColor=white)
+![Vite](https://img.shields.io/badge/Vite-6-646CFF?logo=vite&logoColor=white)
+![Playwright](https://img.shields.io/badge/Tested_with-Playwright-2EAD33?logo=playwright&logoColor=white)
 
-From the repository root, enter the prototype folder first:
+<!-- Add a screenshot or GIF here, e.g. docs/flight.png -->
+<!-- ![Vyxxen in flight](docs/flight.png) -->
+
+</div>
+
+---
+
+## About
+
+Vyxxen Prototype is a browser-based take on the classic isometric shooter *Zaxxon*, and a companion to the Unreal Engine 5 / C++ version of Vyxxen. It was built as an **agentic prototyping experiment**:
+
+1. **Design first.** 40 design decisions, gathered over five rounds of requirements, were written up as a structured Markdown spec ([`design.md`](../design.md)) before any code was written.
+2. **Agent-built.** An AI coding agent turned the spec into a playable game, directed and reviewed against the design.
+3. **Verified.** The core rules are covered by unit tests, and the full game is checked in a real WebGL browser with Playwright.
+
+Every model, marking, texture and sound is **generated in code**. There are no external art assets, no backend and no accounts.
+
+## Features
+
+- ✈️ **Three-band flight.** Steer left and right, and climb or dive through low, mid and high altitude bands, with an altitude marker and a ground shadow so you can read your height.
+- ⛽ **Fuel management.** A full tank lasts about 69 seconds. Hover low over a green pad to refuel automatically, or leave early with a partial tank.
+- 🎯 **Combat.** Turrets fire aimed rounds and interceptors make crossing passes. Cargo crates are optional targets, and towers and barriers are solid hazards.
+- 💎 **Weapon upgrade.** Violet diamonds add two extra shots at ±22°. You keep the upgrade until you die.
+- 🚩 **Checkpoints and lives.** Three sectors, two checkpoints and three lives. Respawns come with a two-second shield.
+- 🎮 **Keyboard and gamepad.** Standard gamepads are supported, with a rescaled stick deadzone.
+- 🔊 **Synthesized audio.** The engine hum and all effects are generated with the Web Audio API.
+
+## Under the hood
+
+| Area | Highlights |
+| --- | --- |
+| **Gameplay loop** | `dt` is capped per frame and split into fixed **120 Hz substeps**, so fast bullets and collisions register reliably on slower displays |
+| **Collision** | Box checks that include altitude for structures and pads, and sphere-distance checks for bullets, interceptors and pickups |
+| **3D math** | Normalized aim vectors for turrets, trigonometry for the spread shot, quaternion-oriented support beams, and a skewed route axis for the isometric course |
+| **Rendering** | Physically based `MeshStandardMaterial` (roughness/metalness), emissive effects, ACES filmic tone mapping, sRGB output and distance fog |
+| **Shadows** | 2048² PCF soft shadow maps that follow the ship, with depth and normal bias tuned to prevent shadow acne |
+| **Performance** | Materials cached by key to avoid duplicate shader programs, geometry shared across bullets and particles, pixel ratio capped at 2, and distance-culled updates |
+| **Architecture** | Game rules are kept in a separate testable module (`rules.js`), apart from the rendering (`world.js`) and the game loop (`game.js`) |
+
+## Getting started
+
+**Requirements:** Node.js **20.19+** or **22.12+**, and a desktop browser with WebGL 2.
 
 ```sh
 cd Vyxxen_Prototype
-```
-
-Run all project commands from this folder.
-
-```sh
 npm install
 npm run dev
 ```
 
-Open the local URL printed by Vite (normally **http://127.0.0.1:5173**). Launch with **Enter** or **Launch Mission**. The game must be served through Vite or a web server; opening `index.html` directly will not work.
+Open the URL Vite prints (usually **http://127.0.0.1:5173**), then press **Enter** or click **Launch Mission**.
 
-```sh
-npm run build       # Production files in dist/
-npm run preview     # Serve the production build locally
-```
+> Opening `index.html` directly won't work. The game has to be served by Vite or another web server.
+
+| Command | What it does |
+| --- | --- |
+| `npm run dev` | Start the dev server with hot reload |
+| `npm run build` | Build production files into `dist/` |
+| `npm run preview` | Serve the production build locally |
 
 ## Controls
 
-| Action | Keyboard | Standard gamepad |
+| Action | Keyboard | Gamepad |
 | --- | --- | --- |
-| Move left / right | A / D or ← / → | Left stick horizontal |
-| Raise / lower altitude | W / S or ↑ / ↓ | Left stick vertical |
-| Fire continuously | Hold Space | Hold primary face button (A / Cross) |
-| Slow forward flight | Hold Shift | Hold either trigger |
-| Pause / resume | Esc or P | Start / Menu |
-| Launch / replay | Enter or on-screen button | Start / Menu |
+| Move left / right | `A` / `D` or `←` / `→` | Left stick ↔ |
+| Climb / dive | `W` / `S` or `↑` / `↓` | Left stick ↕ |
+| Fire (hold) | `Space` | A / Cross |
+| Slow flight (hold) | `Shift` | Either trigger |
+| Pause / resume | `Esc` or `P` | Start / Menu |
+| Launch / replay | `Enter` | Start / Menu |
 
-The top-right sound button mutes the synthesized engine and effects. Audio starts after a user interaction. If a controller is not detected, press one of its buttons while the page is focused. Losing browser focus automatically pauses the run.
+The sound toggle is in the top-right corner. Audio starts after your first interaction. If your controller isn't detected, press any button on it while the page is focused. The game pauses automatically when the window loses focus.
 
-## Flying the mission
+## How to play
 
-- **Three sectors, two checkpoints, three lives.** The 6,600-unit route takes 5½ minutes at cruise speed, plus refueling and any time spent slowing or replaying after a death.
-- **Continuous forward flight.** Left/right is screen-relative; up/down changes altitude. The left-side instrument marks low, mid, and high bands. Edge beacons show the gently constrained flight corridor.
-- **Manage your fuel.** A full tank lasts about 69 seconds. Green platforms are spaced approximately 35–42 seconds apart at cruise. Line up with the marked pad, descend into the low band, and the ship automatically hovers and refuels. An empty tank fills in two seconds. Move sideways or climb to leave early with a partial refill; a full tank releases the hover automatically.
-- **Clear a path.** Orange turrets fire slow aimed rounds. Their visible energy masts can be hit from any altitude band. Interceptors make crossing passes without shooting. Orange cargo crates are optional destructible targets. Gray towers and striped barriers are solid, indestructible hazards; platforms are safe.
-- **Collect violet diamonds.** Fly through one to add two shots at ±22° to the central shot. Three curated pickup locations are selected per run, one in each sector; only one pickup is active at a time. The upgrade lasts until death.
-- **Recover at checkpoints.** A collision, hostile round, interceptor, or empty tank costs a life. After a brief explosion, the ship returns to the last checkpoint with its remaining fuel and two seconds of invulnerability. Each checkpoint has a safe pad, so a dry-tank respawn starts low enough to refill instead of becoming trapped in repeated immediate deaths.
-- **Reach the runway.** Turrets award 150 points, interceptors 250, cargo 100, and mission completion 1,000. Results show completion status, score, active flight time, and targets destroyed.
+- **Fly the course.** The 6,600-unit route takes about 5½ minutes at cruise speed. Edge beacons mark the flight corridor.
+- **Refuel.** Green platforms are about 35–42 seconds apart. Line up with the pad, drop into the low band, and the ship hovers and refills. An empty tank fills in two seconds.
+- **Clear threats.** Turrets fire slow aimed rounds, and you can hit their energy masts from any altitude. Interceptors don't shoot, but they will ram you.
+- **Survive.** A collision, a hostile round or an empty tank costs a life. You respawn at the last checkpoint with your fuel and a short shield.
+- **Score.**
 
-### Design interpretations
+  | Target | Points |
+  | --- | --- |
+  | Interceptor | 250 |
+  | Turret | 150 |
+  | Cargo crate | 100 |
+  | Mission complete | 1,000 |
 
-`design.md` specifies both preserving the weapon state on respawn and losing the three-way upgrade on destruction. This prototype follows the explicit pickup rule: **death resets the weapon to single shot**, while preserving fuel. Fuel drain is suspended during the respawn shield, and empty-tank respawns are placed over a checkpoint pad.
+<details>
+<summary><b>Design interpretations</b></summary>
 
-Destroyed targets and collected pickups stay consumed for the current run, including after a checkpoint respawn. Surviving enemies ahead of the checkpoint are rearmed. Restarting fully resets the mission and selects new pickup positions. Paused time is excluded from results.
+<br>
 
-## Checks
+- `design.md` asks both for keeping the weapon state on respawn and for losing the upgrade on death. This prototype follows the explicit pickup rule: **death resets you to a single shot**, but your fuel is kept.
+- Fuel doesn't drain during the respawn shield. Empty-tank respawns place you over a checkpoint pad, so you can't get stuck dying again and again.
+- Destroyed targets and collected pickups stay gone for the rest of the run, even after a respawn. Enemies ahead of the checkpoint are rearmed.
+- Restarting resets the whole mission and picks new pickup locations, one per sector. Time spent paused isn't counted in your results.
+
+</details>
+
+## Testing
 
 ```sh
-npm test                    # Core rules: fuel, lives, checkpoints, shots, course
+npm test                       # Unit tests for the core rules (Node test runner)
 npx playwright install chromium
-npm run test:browser         # Actual WebGL browser integration and UI checks
+npm run test:browser           # End-to-end WebGL tests in Chromium
 ```
 
-The browser suite covers keyboard flight and pause/restart, simulated standard-gamepad input, refueling, pickups, target damage, checkpoint recovery, fuel depletion, game over, completion, and short desktop layouts. It launches its own Vite server and captures title/flight screenshots in the ignored `test-results/` directory. Physical-controller feel still benefits from hands-on playtesting.
+**Unit tests:** checkpoint progression, life loss and respawn shields, safe dry-tank respawns, fuel drain and refill, exact symmetric 22° spread vectors, curated pickup randomness, course length and pad spacing, and collision with altitude.
 
-## Project map
+**Browser tests:** keyboard flight, firing and pause/restart; refueling; pickups and target damage; checkpoint recovery and fuel depletion; completion and game over; simulated gamepad input; and layout in short desktop windows. Screenshots of the title and flight screens are saved to `test-results/`.
 
-| File | Purpose |
-| --- | --- |
-| `src/game.js` | Game loop, input, combat, lifecycle, and HUD |
-| `src/world.js` | Three.js scene, original procedural models, lighting, effects |
-| `src/course.js` | Fixed authored hazards, platforms, enemies, pickup candidates |
-| `src/rules.js` | Shared tuning constants and testable game rules |
-| `src/audio.js` | Lightweight synthesized engine and event sounds |
-| `src/style.css` | Title screen, flight instruments, and results styling |
-| `tests/` | Rules and browser integration tests |
+## Project structure
 
-All game geometry, markings, textures, and audio are generated in code. UI fonts are loaded from Google Fonts with local fallback stacks. No external art assets, backend, accounts, or save storage are required.
+```
+Vyxxen_Prototype/
+├── index.html          # Page shell, HUD and menu markup
+├── src/
+│   ├── main.js         # Entry point
+│   ├── game.js         # Game loop, input, combat, lifecycle, HUD
+│   ├── world.js        # Three.js scene, procedural models, lighting, effects
+│   ├── course.js       # Authored hazards, platforms, enemies, pickup candidates
+│   ├── rules.js        # Tuning constants and pure, testable game rules
+│   ├── audio.js        # Synthesized engine and event sounds
+│   └── style.css       # Title screen, flight instruments, results
+└── tests/
+    ├── rules.test.js   # Unit tests
+    └── browser/
+        └── game.spec.js  # Playwright integration tests
+```
+
+## Credits
+
+Design and direction by **Angus Chou**. Built with [Three.js](https://threejs.org/), [Vite](https://vitejs.dev/) and [Playwright](https://playwright.dev/). Inspired by Sega's *Zaxxon* (1982). UI fonts come from Google Fonts, with local fallbacks.
